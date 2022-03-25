@@ -1,0 +1,210 @@
+const { 
+WAConnection: _WAConnection,
+Browsers 
+} = require('@adiwajshing/baileys')
+const { color,
+bgcolor 
+} = require('./lib/color')
+const fs = require("fs-extra")
+const figlet = require('figlet')
+const { uncache,
+nocache } = require('./lib/loader')
+const setting = JSON.parse(fs.readFileSync('./setting.json'))
+const welcome = require('./message/group')
+const simple = require('./lib/simple.js')
+const WAConnection = simple.WAConnection(_WAConnection)
+baterai = 'unknown'
+charging = 'unknown'
+
+//nocache
+require('./dha.js')
+nocache('../dha.js', module => console.log(color('[WATCH]', 'cyan'), color(`'${module}'`, 'green'), 'File is updated!'))
+require('./message/group.js')
+nocache('../message/group.js', module => console.log(color('[WATCH]', 'cyan'), color(`'${module}'`, 'green'), 'File is updated!'))
+
+const starts = async (dha = new WAConnection()) => {
+	dha.logger.level = 'warn'
+	console.log(color(figlet.textSync('DHA BOTZ', {
+		font: 'Standard',
+		horizontalLayout: 'default',
+		vertivalLayout: 'default',
+		width: 80,
+		whitespaceBreak: false
+	}), 'cyan'))
+	console.log(color('[ Pesan ]', 'orange'), color('Bot Telah Online!', 'magenta'))
+	console.log(color('[ Pesan ]', 'cyan'), color('Gunakan Bot Dengan Bijak','magenta'))
+	dha.browserDescription = ["DHA - BOT", "Opera", "3.0.0"];
+
+	// Menunggu QR
+	dha.on('qr', () => {
+		console.log(color('[', 'white'), color('!', 'red'), color(']', 'white'), color('Tolong Scan Qrnya Bwang...','magenta'))
+	})
+
+	// Menghubungkan
+	fs.existsSync(`./DhaBotz.json`) && dha.loadAuthInfo(`./DhaBotz.json`)
+	dha.on('connecting', () => {
+		console.log(color('[ Pesan ]', 'orange'), color('Proses Penyambungan...','magenta'));
+	})
+	//connect
+	dha.on('open', () => {
+		console.log(color('[ Pesan ]', 'orange'), color('Bot Siap Digunakan...','magenta'));
+	})
+	// session
+	await dha.connect({
+		timeoutMs: 30 * 1000
+	})
+	fs.writeFileSync(`./DhaBotz.json`, JSON.stringify(dha.base64EncodedAuthInfo(), null, '\t'))
+    //dha.sendMessage(`6282287486762@s.whatsapp.net`, `*${setting.botName}* Telah Berhasil Tersambung`)
+	// Baterai
+	dha.on('CB:action,,battery', json => {
+		global.batteryLevelStr = json[2][0][1].value
+		global.batterylevel = parseInt(batteryLevelStr)
+		baterai = batterylevel
+		if (json[2][0][1].live == 'true') charging = true
+		if (json[2][0][1].live == 'false') charging = false
+		console.log(json[2][0][1])
+		console.log('Baterai : ' + batterylevel + '%')
+	})
+	global.batrei = global.batrei ? global.batrei : []
+	dha.on('CB:action,,battery', json => {
+		const batteryLevelStr = json[2][0][1].value
+		const batterylevel = parseInt(batteryLevelStr)
+		global.batrei.push(batterylevel)
+	})
+    
+         } else if (anu.action == 'promote') {
+			   try {
+					ppimg = await dha.getProfilePicture(`${num.split('@')[0]}@c.us`)
+				} catch {
+					ppimg = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60'
+				}
+			    var thu = await dha.getStatus(anu.participants[0], MessageType.text)
+			    num = anu.participants[0]
+			pusname = dha.contacts[num] != undefined ? dha.contacts[num].notify = undefined ? PhoneNumber('+' + num.replace('@s.whatsapp.net', '')).getNumber('international') : dha.contacts[num].notify || dha.contacts[num].vname : PhoneNumber('+' + num.replace('@s.whatsapp.net', '')).getNumber('international')
+			    teky = `
+    *❏𝙋𝙍𝙊𝙈𝙊𝙏𝙀 𝘿𝙀𝙏𝙀𝘾𝙏❏*
+        
+╔═════════════════╕
+║*Username: @${num.split('@')[0]}*
+║
+║*Bio : ${thu.status}*
+║*Resmi Menjadi Admin*
+║*Group: ${mdata.subject}*
+║*Selamat Kak @${num.split('@')[0]}*
+╚═════════════════╛`            
+			   let buff = await getBuffer(ppimg)
+			   dha.sendMessage(mdata.id, buff, MessageType.image, {caption: teky, contextInfo: {"mentionedJid": [num]},
+quoted: {
+                      "key": {
+    "fromMe": false,
+    "participant": `0@s.whatsapp.net`,
+    "remoteJid": `0@s.whatsapp.net`
+  },
+  "message": {
+    "groupInviteMessage": {
+      "groupJid": "628983583288-1620319322@g.us",
+      "inviteCode": "NgsCIU2lXKh3VHJT",
+      "groupName": "IstMeDha",
+      "jpegThumbnail": fs.readFileSync('./image.jpeg'), 
+      "caption": `KAMU SEKARANG ADMIN GROUP`
+    }
+  }
+}
+})
+			} else if (anu.action == 'demote') {
+			   try {
+					ppimg = await dha.getProfilePicture(`${num.split('@')[0]}@c.us`)
+				} catch {
+					ppimg = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60'
+				}
+				thu = await dha.getStatus(anu.participants[0], MessageType.text)
+			   num = anu.participants[0]
+			puhname = dha.contacts[num] != undefined ? dha.contacts[num].notify = undefined ? PhoneNumber('+' + num.replace('@s.whatsapp.net', '')).getNumber('international') : dha.contacts[num].notify || dha.contacts[num].vname : PhoneNumber('+' + num.replace('@s.whatsapp.net', '')).getNumber('international')
+			   teko = `
+       *❏𝘿𝙀𝙈𝙊𝙏𝙀 𝘿𝙀𝙏𝙀𝘾𝙏❏*
+         
+╔═════════════════╕
+║*Username* : @${num.split('@')[0]}
+║
+║*Bio : ${thu.status}*
+║*Resmi Menjadi Member*
+║*Group: ${mdata.subject}*
+║*Maaf Kak @${num.split('@')[0]}*
+╚═════════════════╛`
+let buff = await getBuffer(ppimg)
+ dha.sendMessage(mdata.id, buff, MessageType.image, {caption: teko, contextInfo: {"mentionedJid": [num]},
+quoted: {
+                      "key": {
+    "fromMe": false,
+    "participant": `0@s.whatsapp.net`,
+    "remoteJid": `0@s.whatsapp.net`
+  },
+  "message": {
+    "groupInviteMessage": {
+      "groupJid": "628983583288-1620319322@g.us",
+      "inviteCode": "NgsCIU2lXKh3VHJT",
+      "groupName": "IstMeDha",
+      "jpegThumbnail": fs.readFileSync('./image.jpeg'), 
+      "caption": `YEE ADMIN BERKURANG 1/SATU👀`
+    }
+  }
+}
+})
+				}
+		} catch (e) {
+			console.log('Error : %s', color(e, 'red'))
+		}
+})
+
+dha.on('group-update', async (anu) => {
+if (!gcdetect.includes(anu.jid)) return
+fkontakk = { key: {
+                  fromMe: false,
+                  participant: `0@s.whatsapp.net`, ...(anu.jid ? { remoteJid: '6283136505591-1604595598@g.us' } : {})
+               },
+               message: {
+                  "contactMessage":{"displayName":fake,"vcard":"BEGIN:VCARD\nVERSION:3.0\nN:2; DhaBotz Owner;;;\nFN:DhaBotzOfc\nitem1.TEL;waid=6282288783972:+6282288783972\nitem1.X-ABLabel:Mobile\nEND:VCARD"
+               }}}
+  metdata = await dha.groupMetadata(anu.jid)
+    if(anu.announce == 'false'){
+    teks = `- [ Group Opened ] -\n\n_Group telah dibuka oleh admin_\n_Sekarang semua member bisa mengirim pesan_`
+    dha.sendMessage(metdata.id, teks, MessageType.text, {quoted: fkontakk})
+    console.log(`- [ Group Opened ] - In ${metdata.subject}`)
+  }
+  else if(anu.announce == 'true'){
+    teks = `- [ Group Closed ] -\n\n_Group telah ditutup oleh admin_\n_Sekarang hanya admin yang dapat mengirim pesan_`
+    dha.sendMessage(metdata.id, teks, MessageType.text, {quoted: fkontakk})
+    console.log(`- [ Group Closed ] - In ${metdata.subject}`)
+  }
+  else if(!anu.desc == ''){
+    tag = anu.descOwner.split('@')[0] + '@s.whatsapp.net'
+    teks = `- [ Group Description Change ] -\n\nDeskripsi Group telah diubah oleh Admin @${anu.descOwner.split('@')[0]}\n• Deskripsi Baru : ${anu.desc}`
+    dha.sendMessage(metdata.id, teks, MessageType.text, {contextInfo: {"mentionedJid": [tag]}, quoted: fkontakk})
+    console.log(`- [ Group Description Change ] - In ${metdata.subject}`)
+  }
+  else if(anu.restrict == 'false'){
+    teks = `- [ Group Setting Change ] -\n\nEdit Group info telah dibuka untuk member\nSekarang semua member dapat mengedit info Group Ini`
+    dha.sendMessage(metdata.id, teks, MessageType.text, {quoted: fkontakk})
+    console.log(`- [ Group Setting Change ] - In ${metdata.subject}`)
+  }
+  else if(anu.restrict == 'true'){
+    teks = `- [ Group Setting Change ] -\n\nEdit Group info telah ditutup untuk member\nSekarang hanya admin group yang dapat mengedit info Group Ini`
+    dha.sendMessage(metdata.id, teks, MessageType.text, {quoted: fkontakk})
+    console.log(`- [ Group Setting Change ] - In ${metdata.subject}`)
+  }
+})
+
+}
+	
+
+	// welcome
+	dha.on('group-participants-update', async (anu) => {
+		await welcome(dha, anu)
+	})
+
+	dha.on('chat-update', async (message) => {
+		require('./dha.js')(dha, message)
+	})
+}
+
+starts()
