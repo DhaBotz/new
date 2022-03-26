@@ -43,6 +43,7 @@ const Exif = require('./lib/exif');
 const exif = new Exif();
 
 var { yta } = require('./lib/ytdl')
+const awln = fs.readFileSync ('./media/logo.jpg')
 const {awalMenu} = require('./message/help.js')
 const { getBuffer, getGroupAdmins, getRandom, runtime, pickRandom, clockString, sleep } = require('./lib/myfunc')
 const { fetchJson, getBase64, kyun, createExif } = require('./lib/fetch')
@@ -59,6 +60,7 @@ const { isTicTacToe, getPosTic } = require('./lib/tictactoe')
 const tictac = require('./lib/tictac')
 const truth = JSON.parse(fs.readFileSync('./database/truth.json'))
 const dare = JSON.parse(fs.readFileSync('./database/dare.json'))
+
 const pantekk = '```'
 
 hit_today = []
@@ -71,13 +73,13 @@ let setting = JSON.parse(fs.readFileSync('./setting.json'))
 let mtk = [];
 let ckl = [];
 let tictactoe = [];
-let family100 = [];
 let tebakgambar = [];
 
 const { owner, gamewaktu, botName } = setting
 
 
 // Database
+let antilink = JSON.parse(fs.readFileSync('./database/antilink.json'));
 let welkom = JSON.parse(fs.readFileSync('./database/welcome.json'))
 let _scommand = JSON.parse(fs.readFileSync('./database/scommand.json'))
 let sewa = JSON.parse(fs.readFileSync('./database/sewa.json'));
@@ -137,7 +139,6 @@ module.exports = dha = async (dha, mek) => {
 		global.prefix
 		mek.message = (Object.keys(mek.message)[0] === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
 		const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
-		const tanggal = moment.tz('Asia/Jakarta').format('dddd') + ', ' + moment.tz('Asia/Jakarta').format('LL')
 		const waktu = moment.tz('Asia/Jakarta').format('a')
 		const time = moment.tz('Asia/Jakarta').format('HH:mm:ss z')
 		const content = JSON.stringify(mek.message)
@@ -182,11 +183,29 @@ module.exports = dha = async (dha, mek) => {
         const mentionUser = mention != undefined ? mention.filter(n => n) : []
 		
         const isOwner = ownerNumber.includes(sender)
+        const isAntiLink = isGroup ? antilink.includes(from) : false
         const isWelkom = isGroup ? welkom.includes(from) : false
         const isSewa = _sewa.checkSewaGroup(from, sewa)
-
+//BUTTON
+// here button function
+        selectedButton = (type == 'buttonsResponseMessage') ? mek.message.buttonsResponseMessage.selectedButtonId : ''
+        responseButton = (type == 'listResponseMessage') ? mek.message.listResponseMessage.title : ''
+        
+        const listmsg = (from, title, desc, list) => { // ngeread nya pake rowsId, jadi command nya ga keliatan
+            let po = dha.prepareMessageFromContent(from, {"listMessage": {"title": title,"description": desc,"buttonText": "Pilih Disini","footerText": "©yudha perdana","listType": "SINGLE_SELECT","sections": list}}, {})
+            return dha.relayWAMessage(po, {waitForAck: true})
+}
   //button       
-const sendButton = async (from, context, fortext, but, mek) => {
+var sendButMessage = (id, text1, desc1, but = [], options = {}) => {
+var buttonMessage = {
+contentText: text1,
+footerText: desc1,
+buttons: but,
+headerType: 1
+}
+dha.sendMessage(id, buttonMessage, MessageType.buttonsMessage, options)
+}
+var sendButton = async (from, context, fortext, but, todd) => {
 buttonMessages = {
 contentText: context,
 footerText: fortext,
@@ -194,13 +213,38 @@ buttons: but,
 headerType: 1
 }
 dha.sendMessage(from, buttonMessages, buttonsMessage, {
-quoted: mek
+quoted: todd
 })
-}              
+}
+var sendButImage = async (from, context, fotext, img, but) => {
+gam = img
+kirtoddd = await dha.prepareMessage(from, gam, MessageType.image)
+buttonMessagesI = {
+imageMessage: kirtoddd.message.imageMessage,
+contentText: context,
+footerText: fotext,
+buttons: but,
+headerType: 4
+}
+dha.sendMessage(from, buttonMessagesI, MessageType.buttonsMessage, {quoted: krtd1})}
+var sendButVideo = async(id, text1, desc1, vid1, but = [], options = {}) => {
+kma = vid1
+mhan = await dha.prepareMessage(from, kma, video)
+var buttonMessages = {
+videoMessage: mhan.message.videoMessage,
+contentText: text1,
+footerText: desc1,
+buttons: but,
+headerType: 5
+}
+dha.sendMessage(id, buttonMessages, MessageType.buttonsMessage, options)
+}
 ///Button Location
 var sendButloc = (from, title, text, desc, button, sen, men, file) => {
 return dha.sendMessage(from, {"text": '',"contentText": title + text,"footerText": desc, "buttons": button, "headerType": "LOCATION", "locationMessage": { "degreesLongitude": "", "degreesLatitude": "", "jpegThumbnail": file}}, MessageType.buttonsMessage, { quoted: mek, contextInfo: {"mentionedJid": men ? men : []}})
 }
+
+//batas
         const isUrl = (url) => {
             return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
         }
@@ -372,6 +416,102 @@ const sendStickerFromUrl = async(to, url) => {
         return d.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'
     })
     }
+//HARI & BULAN
+var date = new Date();
+        var tahun = date.getFullYear();
+        var bulan1 = date.getMonth();
+        var tanggal = date.getDate();
+        var hari = date.getDay();
+        var jam = date.getHours();
+        var menit = date.getMinutes();
+        var detik = date.getSeconds();
+        var waktoo = date.getHours();
+            switch(hari) {
+                case 0: hari = "Minggu"; break;
+                case 1: hari = "Senin"; break;
+                case 2: hari = "Selasa"; break;
+                case 3: hari = "Rabu"; break;
+                case 4: hari = "Kamis"; break;
+                case 5: hari = "Jum`at"; break;
+                case 6: hari = "Sabtu"; break;
+            }
+            switch(bulan1) {
+                case 0: bulan1 = "Januari"; break;
+                case 1: bulan1 = "Februari"; break;
+                case 2: bulan1 = "Maret"; break;
+                case 3: bulan1 = "April"; break;
+                case 4: bulan1 = "Mei"; break;
+                case 5: bulan1 = "Juni"; break;
+                case 6: bulan1 = "Juli"; break;
+                case 7: bulan1 = "Agustus"; break;
+                case 8: bulan1 = "September"; break;
+                case 9: bulan1 = "Okttober"; break;
+                case 10: bulan1 = "November"; break;
+                case 11: bulan1 = "Desember"; break;
+            }
+            var tampilTanggal = "" + hari + ", " + tanggal + " " + bulan1 + " " + tahun;
+            var tampilWaktu = "" + "Jam : " + jam + ":" + menit + ":" + detik + " Wib";
+               /*****************END SCURITY FEATURE ********/
+	        
+	        //WAKTU
+			var ase = new Date();
+                        var waktoo = ase.getHours();
+                        switch(waktoo){
+                case 0: waktoo = "Tengah Malam🌚"; break;
+                case 1: waktoo = "Tengah Malam🌚"; break;
+                case 2: waktoo = "Dini Hari🌒"; break;
+                case 3: waktoo = "Dini Hari🌓"; break;
+                case 4: waktoo = "Subuh🌔"; break;
+                case 5: waktoo = "Subuh🌔"; break;
+                case 6: waktoo = "Selamat Pagi🌝"; break;
+                case 7: waktoo = "Selamat Pagi🌝"; break;
+                case 8: waktoo = "Selamat Pagi🌝"; break;
+                case 9: waktoo = "Selamat Pagi🌝"; break;
+                case 10: waktoo = "Selamat Pagi🌝"; break;
+                case 11: waktoo = "Selamat Siang🌞"; break;
+                case 12: waktoo = "Selamat Siang🌞"; break;
+                case 13: waktoo = "Selamat Siang🌞"; break;
+                case 14: waktoo = "Selamat Siang🌞"; break;
+                case 15: waktoo = "Selamat Sore🌝"; break;
+                case 16: waktoo = "Selamat Sore🌝"; break;
+                case 17: waktoo = "Selamat Sore🌖"; break;
+                case 18: waktoo = "Waktu Magrib🌘"; break;
+                case 19: waktoo = "Waktu Magrib🌚"; break;
+                case 20: waktoo = "Selamat Malam🌚"; break;
+                case 21: waktoo = "Selamat Malam🌚"; break;
+                case 22: waktoo = "Selamat Malam🌚"; break;
+                case 23: waktoo = "Tengah Malam🌚"; break;
+            }
+            var tampilHari = "" + waktoo;
+                        const jmn = moment.tz('Asia/Jakarta').format('HH:mm:ss')
+				let d = new Date
+				let locale = 'id'
+				let gmt = new Date(0).getTime() - new Date('1 Januari 2021').getTime()
+				const weton = ['Pahing', 'Pon','Wage','Kliwon','Legi'][Math.floor(((d * 1) + gmt) / 84600000) % 5]
+				const week = d.toLocaleDateString(locale, { weekday: 'long' })
+				const calender = d.toLocaleDateString(locale, {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric'
+		       })
+
+//=============FUNCTION================//
+    function clockString(ms) {
+      let h = isNaN(ms) ? "--" : Math.floor(ms / 3600000);
+      let m = isNaN(ms) ? "--" : Math.floor(ms / 60000) % 60;
+      let s = isNaN(ms) ? "--" : Math.floor(ms / 1000) % 60;
+      return [h, m, s].map((v) => v.toString().padStart(2, 0)).join(":");
+    }
+		
+		//runtime bio
+		 let settingstatus = 0;
+    if (new Date() * 1 - settingstatus > 1000) {
+      let _uptime = process.uptime() * 1000;
+      let uptime = clockString(_uptime);
+
+      await dha.setStatus(`Aktif Selama: ${uptime} | ${botName}`).catch((_) => _);
+      settingstatus = new Date() * 1;            
+          }                      
        
         colors = ['red', 'white', 'black', 'blue', 'yellow', 'green']
 		const isMedia = (type === 'imageMessage' || type === 'videoMessage')
@@ -380,6 +520,13 @@ const sendStickerFromUrl = async(to, url) => {
 		const isQuotedAudio = type === 'extendedTextMessage' && content.includes('audioMessage')
 		const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
 
+//antilink
+if (isGroup && isAntiLink && !isOwner && !isGroupAdmins && isBotGroupAdmins){
+            if (budy.match(/(https:\/\/chat.whatsapp.com)/gi)) {
+                reply(`*「 GROUP LINK DETECTOR 」*\n\nSepertinya kamu mengirimkan link grup, maaf kamu akan di kick`)
+                dha.groupRemove(from, [sender])
+            }
+        }
          // Sewa
            _sewa.expiredCheck(dha, sewa)
         
@@ -387,7 +534,6 @@ const sendStickerFromUrl = async(to, url) => {
               if (isTicTacToe(from, tictactoe)) tictac(prefix, tictactoe, from, sender, dha, mek)
         
              // Game
-              game.cekWaktuFam(dha, family100)
               game.cekWaktuTG(dha, tebakgambar)
               game.cekWaktuMtk(dha, mtk)
               game.cekWaktuCkl(dha, ckl)
@@ -410,20 +556,7 @@ const sendStickerFromUrl = async(to, url) => {
               ckl.splice(game.getCklPosi(from, ckl), 1)
            }
        }
-              if (game.isfam(from, family100)) {
-               var anjuy = game.getjawaban100(from, family100)
-               for (let i of anjuy){
-                if (budy.toLowerCase().includes(i)){
-                    await reply(`*Jawaban benar*\n*Jawaban :* ${i}\n*Jawaban yang blum tertebak :* ${anjuy.length - 1}`)
-                    var anug = anjuy.indexOf(i)
-                    anjuy.splice(anug, 1)
-                }
-            }
-            if (anjuy.length < 1){
-                dha.sendMessage(from, `Semua jawaban sudah tertebak\nKirim *${prefix}family100* untuk bermain lagi`, text)
-                family100.splice(game.getfamposi(from, family100), 1)
-            }
-       }
+              
               
          // CMD
         if (isCmd && !isGroup)
@@ -434,25 +567,27 @@ const sendStickerFromUrl = async(to, url) => {
 //Zona Nyaman           
 //Zona Nyaman           
             switch(command){
-           
-           case 'owner': case 'creator':
-               sendKontak(from, `${owner}`, `${ownerName}`, 'Sibukk!!')
-               await sleep(1000)
-               txtt =`Hai Kak ${pushname}\nItu Ownerku, Mau tau soal apa ya?`
-               buttons = [{buttonId: `${prefix}sourcecode`,buttonText:{displayText: 'SC BOT'},type:1},{buttonId:`${prefix}infoig`,buttonText:{displayText:'INSTAGRAM'},type:1}]
-               buttonsMessage = { contentText: `${txtt}`, footerText: 'Jangan Sungkan Chat Ya Kak', buttons: buttons, headerType: 1 }
-               prep = await dha.prepareMessageFromContent(from,{buttonsMessage},{})
-               dha.relayWAMessage(prep)
-               break      
-case 'menu':            
-           case 'help':
-               menu =`Yo @${sender.split('@')[0]} 👋\n
-*Tanggal:* ${tanggal}
-*Waktu:* ${waktu.charAt(0).toUpperCase() + waktu.slice(1)} || ${time}
-*Runtime Bot:* ${clockString(process.uptime())}
+case 'menu':         
+thu = await dha.getStatus(`${sender.split('@')[0]}@s.whatsapp.net`, MessageType.text)
+menu =`*${waktoo}*
+ *${tampilTanggal}*
+ *${tampilWaktu}*
+ 
+*Nama User: @${sender.split('@')[0]}*
+*Bio User: ${thu.status}*
 
-*TOOLs*
+Saya *${botName}* Siap Membantu
+Pilih Perintah Yang Harus Bot Jalankan`
+dha.sendMessage(from, { contentText: `${menu}`, 
+footerText: `NOTE: Silahkan Ketik .allmenu Jika Tombol Dibawah Tidak Muncul!`,
+buttons: [{ buttonId: `.allmenu`, buttonText: { displayText: 'LIST MENU' }, type: 1 },{ buttonId: `.credits`, buttonText: { displayText: 'CREDITZ' }, type: 1 } ],
+headerType: 'LOCATION', locationMessage: { degreesLatitude: '', degreesLongitude: '', jpegThumbnail: awln, contextInfo: {mentionedJid: [sender]}}}, 'buttonsMessage')
+ break 
+    
+case 'allmenu':         
+menu =`*TOOLS*
 • ${prefix}attp
+• ${prefix}trigger
 • ${prefix}nulis
 • ${prefix}sticker
 • ${prefix}toimg
@@ -461,13 +596,9 @@ case 'menu':
 • ${prefix}telesticker
 
 *DOWNLOADER*
-• ${prefix}nhdl
 • ${prefix}play
-• ${prefix}igdl
-• ${prefix}tiktokdl
-• ${prefix}mediafire
-• ${prefix}facebook
-• ${prefix}youtubedl
+• ${prefix}instagram
+• ${prefix}tiktok
 
 *STICKER CMD*
 • ${prefix}setcmd
@@ -479,8 +610,6 @@ case 'menu':
 • ${prefix}google
 • ${prefix}ytsearch
 • ${prefix}pinterest
-• ${prefix}ghsearch
-• ${prefix}nhentaisearch
 
 *IMAGE*
 • ${prefix}waifu
@@ -496,18 +625,45 @@ case 'menu':
 • ${prefix}listsewa
 • ${prefix}ceksewa
 • ${prefix}welcome
+• ${prefix}antilink
 • ${prefix}sewa add/del
 
 *GAME*
 • ${prefix}tod
 • ${prefix}math
 • ${prefix}tictactoe
-• ${prefix}family100
 • ${prefix}caklontong
 • ${prefix}tebakgambar`
-               dha.sendMessage(from, menu, text, {quoted: mek, contextInfo: {mentionedJid: [sender], externalAdReply: { title: 'dha Bot', thumbnailUrl: 'https://telegra.ph/file/ad408bff29a90b6627e6f.jpg', sourceUrl: 'https://github.com/dha-chan02/' }}})
-               break
-//------------------< Sticker Cmd >-------------------
+dha.sendMessage(from, { contentText: `${menu}`, 
+footerText: `NOTE: Sc Ini Free Dan Masih Dalam Tahap Pengembangan Kalian Semua Bisa Record Sendiri Atau Tunggu Updatean Dari Saya\nTerimakasih~`,
+buttons: [{ buttonId: `.owner`, buttonText: { displayText: 'OWNER' }, type: 1 } ],
+headerType: 'LOCATION', locationMessage: { degreesLatitude: '', degreesLongitude: '', jpegThumbnail: awln, contextInfo: {mentionedJid: [sender]}}}, 'buttonsMessage')
+ break            
+           case 'owner': case 'creator':
+               sendKontak(from, `${owner}`, `${ownerName}`, 'Sibukk!!')
+               await sleep(1000)
+               txtt =`Hai Kak  @${sender.split('@')[0]} Itu Ownerku, Jangan Spam ya...!!`
+               buttons = [{buttonId: `${prefix}sourcecode`,buttonText:{displayText: 'SC'},type:1},{buttonId:`${prefix}ig`,buttonText:{displayText:'IG'},type:1},{buttonId:`${prefix}yt`,buttonText:{displayText:'YT'},type:1}]
+               buttonsMessage = { contentText: `${txtt}`, footerText: 'Jangan Sungkan Chat Ya Kak', buttons: buttons, headerType: 1 }
+               prep = await dha.prepareMessageFromContent(from,{buttonsMessage},{})
+               dha.relayWAMessage(prep)
+               break      
+ case 'sc':
+              teks = ` Follow Gh Owner Untuk Sc tinggal Frok atau Download Di https://github.com/DhaBotz/`
+              dha.sendMessage(from, teks, text, { quoted : mek })
+              break              
+ case 'yt':
+              teks = `Jangan Lupa Subrek Yt Owner : https://youtu.be/vVHCBBs6lIs`
+              dha.sendMessage(from, teks, text, { quoted : mek })
+              break                   
+ case 'ig':
+              teks = `Jangan Lupa Follow Ig Owner https://instagram.com/yudha_perdana809/\nKalau Ada Keluhan Dm Aja`
+              dha.sendMessage(from, teks, text, { quoted : mek })
+              break                  
+//   INI              
+//      STICKER 
+//               COMMAND
+
            case 'addcmd': case 'setcmd':
               if (isQuotedSticker) {
               if (!q) return reply(`Penggunaan : ${command} cmdnya dan tag stickernya`)
@@ -534,21 +690,10 @@ case 'menu':
 }
               mentions(teksnyee, cemde, true)
               break
-//------------------< Game >-------------------
-        case 'family100':
-              if (game.isfam(from, family100)) return reply(`Masih ada soal yang belum di selesaikan`)
-              anu = await axios.get(`http://api.lolhuman.xyz/api/tebak/family100?apikey=${setting.lolkey}`)
-              reply(`*JAWABLAH SOAL BERIKUT*\n\n*Soal :* ${anu.data.result.question}\n*Total Jawaban :* ${anu.data.result.aswer.length}\n\nWaktu : ${gamewaktu}s`)
-              anoh = anu.data.result.aswer
-              rgfds = []
-              for (let i of anoh){
-              fefs = i.split('/') ? i.split('/')[0] : i
-              iuhbb = fefs.startsWith(' ') ? fefs.replace(' ','') : fefs
-              axsf = iuhbb.endsWith(' ') ? iuhbb.replace(iuhbb.slice(-1), '') : iuhbb
-              rgfds.push(axsf.toLowerCase())
-}
-              game.addfam(from, rgfds, gamewaktu, family100)
-              break
+// INI 
+//    FEATUR
+//            GAME
+
           case 'tebakgambar':
               if (game.isTebakGambar(from, tebakgambar)) return reply(`Masih ada soal yang belum di selesaikan`)
               anu = await axios.get(`http://api.lolhuman.xyz/api/tebak/gambar?apikey=${setting.lolkey}`)
@@ -596,7 +741,17 @@ case 'menu':
 			  tictactoe.splice(getPosTic(from, tictactoe), 1)
 			  reply('Berhasil menghapus sesi tictactoe di grup ini')
 			  break
-//------------------< Public/Self >-------------------
+			  
+          case 'tod':
+              result =`*Truth Or Dare*\nPemain diberi pilihan antara menjawab pertanyaan dengan jujur, atau melakukan tantangan yang diberikan`
+              buttons = [{buttonId: `${prefix}buttons6`,buttonText:{displayText: 'Truth'},type:1},{buttonId:`${prefix}buttons5`,buttonText:{displayText:'Dare'},type:1},{buttonId:`${prefix}tod`,buttonText:{displayText:'Tod'},type:1}]
+              buttonsMessage = { contentText: `${result}`, footerText: 'Kebenaran atau tantangan?', buttons: buttons, headerType: 1 }
+              prep = await dha.prepareMessageFromContent(from,{buttonsMessage},{})
+              dha.relayWAMessage(prep)
+              break          			  
+// FEATUR
+//         OWNER
+			  
         case 'public':
         	  if (!isOwner) return 
               if (banChats === false) return 
@@ -610,7 +765,6 @@ case 'menu':
         	  banChats = true
               textImg(`Success Activated Mode Self`)
               break
-//------------------< Sewa >-------------------
           case 'sewa':
               if (!isGroup)return reply(mess.only.group)
               if (!isOwner) return reply(mess.only.owner)
@@ -626,6 +780,8 @@ case 'menu':
               reply(`Example: *${prefix}sewa* add/del waktu`)
 }
               break
+// FEATUR 
+//         GROUP             
        case 'sewalist': case 'listsewa':
               txtnyee = `List Sewa\nJumlah : ${sewa.length}\n\n`
               for (let i of sewa){
@@ -641,9 +797,10 @@ case 'menu':
               premiumnya = `*「 SEWA EXPIRE 」*\n\n➸ *ID*: ${from}\n➸ *Expired :* ${cekvip.days} day(s) ${cekvip.hours} hour(s) ${cekvip.minutes} minute(s)`
               reply(premiumnya)
               break
-//------------------< Downloader/Search/Anime >-------------------
+//  FITUR
+//        Downloader
           case 'nhentaisearch': case 'nhsearch':
-              if (!q) return reply(`Example: ${prefix}nhentaisearch Nakano dha`)
+              if (!q) return reply(`Example: ${prefix}nhentaisearch Nakano`)
               rowsdata = [];
               res = await axios.get(`https://api.lolhuman.xyz/api/nhentaisearch?apikey=${setting.lolkey}&query=${q}`)
               for (let i = 0; i < res.data.result.length; i++) {
@@ -652,48 +809,16 @@ case 'menu':
               listM = dha.prepareMessageFromContent(from, { listMessage: { title: "NHENTAI BOT\n", description: "nHentai search", buttonText: "Click Here", listType: 1, sections: [{ rows: rowsdata }] }}, { quoted: mek })
               dha.relayWAMessage(listM, { waitForAck: true })
               break
-          case 'igdl': case 'instagram':
-              try {
-              if (!isUrl(q)) return reply('Linknya?')
-              res = await axios.get(`https://api.lolhuman.xyz/api/instagram2?apikey=${setting.lolkey}&url=${args[0]}`)
-              data = res.data.result
-              for (let i = 0; i < data.media.length; i++) {
-              sendMediaURL(from, data.media[i], data.caption, {thumbnail: Buffer.alloc(0)})
-}
-              } catch (e) {
-              console.log(e)
-              reply(String(e))
-}
-              break
-          case 'ghsearch': case 'githubsearch': case 'searchgithub':
-              if (!q) return reply('Cari apa?')
-              res = await fetch('https://api.github.com/search/repositories?q='+q)
-              json = await res.json()
-              if (res.status !== 200) throw json
-              str = json.items.map((repo, index) => {
-              return `
-${1 + index}. *${repo.full_name}*${repo.fork ? ' (fork)' : ''}
-_${repo.html_url}_
-_Dibuat pada *${formatDate(repo.created_at)}*_
-_Terakhir update pada *${formatDate(repo.updated_at)}*_
-👁  ${repo.watchers}   🍴  ${repo.forks}   ⭐  ${repo.stargazers_count}
-${repo.open_issues} Issue${repo.description ? `
-*Deskripsi:*\n${repo.description}` : ''}
-*Clone:* \`\`\`$ git clone ${repo.clone_url}\`\`\`
-`.trim()
-}).join('\n\n')
-              reply(str)
-              break
-case 'brainly':
-             brainly(args.join(" ")).then(res => {
-             hmm = '────────────\n'
-             for (let Y of res.data) {
-             hmm += `\n*「 _BRAINLY_ 」*\n\n*➸ Pertanyaan:* ${Y.pertanyaan}\n\n*➸ Jawaban:* ${Y.jawaban[0].text}\n───────────\n`
-}
-             reply(hmm)
-             console.log(res)
-})
-             break              
+          case 'igdl': 
+       case 'instagram':
+              if (!q) return reply('Link Yang Mana? ')
+              if (!q.includes('instagram')) return reply(mess.error.Iv)
+              reply(mess.wait)
+              anu = await igDownloader(`${q}`)
+             .then((data) => { sendMediaURL(from, data.result.link, data.result.desc, mek) })
+             .catch((err) => { reply(String(err)) })
+              break     
+              
           case 'image':
        case 'gimage':
        case 'googleimage':
@@ -710,27 +835,7 @@ case 'brainly':
 }
 }
              break
-          case 'youtubedl': case 'ytdl':
-              if (args.length < 1) return reply('Link Nya Mana?')
-              if(!isUrl(args[0]) && !args[0].includes('youtu')) return reply(mess.error.Iv)
-              teks = args.join(' ')
-              res = await y2mateA(teks).catch(e => {
-              reply('_[ ! ] Error Gagal Dalam Memasuki Web Y2mate_')
-})
-              result = `*Youtube Downloader*
-             
-📜 Title : ${res[0].judul}
-🎁 Type : mp3/mp4
-🚀 Durasi : ${res[0].size}`
-              buttons = [{buttonId: `${prefix}buttons2 ${q}`,buttonText:{displayText: `▶️ Video`},type:1},{buttonId:`${prefix}buttons1 ${q}`,buttonText:{displayText:'🎵 Audio'},type:1}]
-              fs.writeFileSync(`./ytmp.jpeg`, await getBuffer(res[0].thumb))
-              imageMsg = ( await dha.prepareMessage(from, fs.readFileSync(`./ytmp.jpeg`), 'imageMessage', {thumbnail: Buffer.alloc(0)})).message.imageMessage
-              buttonsMessage = {footerText:'Pilih satu format di bawah ini', imageMessage: imageMsg,
-              contentText:`${result}`,buttons,headerType:4}
-              prep = await dha.prepareMessageFromContent(from,{buttonsMessage},{quoted: mek})
-              dha.relayWAMessage(prep)
-              fs.unlinkSync(`./ytmp.jpeg`)
-              break
+
           case 'tiktokdl': case 'tiktok':
               if (!q) return reply('Linknya?')
               if (!q.includes('tiktok')) return reply(mess.error.Iv)
@@ -745,13 +850,8 @@ case 'brainly':
               dha.relayWAMessage(prep)
               fs.unlinkSync(`./${sender}.jpeg`)
               break          
-          case 'tod':
-              result =`*Truth Or Dare*\nPemain diberi pilihan antara menjawab pertanyaan dengan jujur, atau melakukan tantangan yang diberikan`
-              buttons = [{buttonId: `${prefix}buttons6`,buttonText:{displayText: 'Truth'},type:1},{buttonId:`${prefix}buttons5`,buttonText:{displayText:'Dare'},type:1},{buttonId:`${prefix}tod`,buttonText:{displayText:'Tod'},type:1}]
-              buttonsMessage = { contentText: `${result}`, footerText: 'Kebenaran atau tantangan?', buttons: buttons, headerType: 1 }
-              prep = await dha.prepareMessageFromContent(from,{buttonsMessage},{})
-              dha.relayWAMessage(prep)
-              break          
+              
+
           case 'waifu': case 'loli': case 'husbu': case 'milf': case 'cosplay': case 'wallml':
               let wipu = (await axios.get(`https://raw.githubusercontent.com/Arya-was/endak-tau/main/${command}.json`)).data
               let wipi = wipu[Math.floor(Math.random() * (wipu.length))]
@@ -799,17 +899,32 @@ break
 case 'ytmp4':
 if (args.length < 1) return reply('Link?')     
 reply(mess.wait)
-KirTid = await fetchJson(`https://api.lolhuman.xyz/api/ytvideo2?apikey=NgentotRusa&url=${q}`)
+KirTid = await fetchJson(`https://api.lolhuman.xyz/api/ytvideo2?apikey=${setting.lolkey}&url=${q}`)
 kirmp4 = await getBuffer(KirTid.result.link)
 await dha.sendMessage(from, kirmp4, video, { mimetype: 'video/mp4', quoted: mek })
 break
 case 'ytmp3':
-if (args.length < 1) return reply('Link?')         
-reply(mess.wait)      
-KirTid = await fetchJson(`https://api.lolhuman.xyz/api/ytaudio2?apikey=NgentotRusa&url=${q}`)
-kirmp3 = await getBuffer(KirTid.result.link)
-await dha.sendMessage(from, kirmp3, audio, { mimetype: 'audio/mp4', quoted: mek})
-break
+						if (args.length === 0) return reply(`Kirim perintah *${prefix}ytmp3 [linkYt]*`)
+						let isLinks = args[0].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
+						if (!isLinks) return reply(mess.error.Iv)
+						try {
+							reply(mess.wait)
+							yta(args[0])
+							.then((res) => {
+								const { dl_link, thumb, title, filesizeF, filesize } = res
+								axios.get(`https://tinyurl.com/api-create.php?url=${dl_link}`)
+								.then((a) => {
+								if (Number(filesize) >= 30000) return sendMediaURL(from, thumb, `❏ *YTmp3*\n\n❏ *Title* : ${title}\n❏ *Ext* : MP3\n*Filesize* : ${filesizeF}\n*Link* : ${a.data}\n\n_Maaf durasi melebihi batas maksimal, Silahkan klik link diatas_`)
+								const captions = `❏ *YTmp3*\n\n❏ *Title* : ${title}\n❏ *Ext* : MP3\n❏ *Size* : ${filesizeF}\n\n_Audio sedang dikirim, Silahkan tunggu beberapa menit_`
+								sendMediaURL(from, thumb, captions)
+								sendMediaURL(from, dl_link).catch(() => reply(mess.error.api))
+							})
+
+							})
+						} catch (err) {
+							reply(mess.error.api)
+						}
+						break
           case 'pinterest': case 'pin':
               if (args.length < 1) return reply(`${prefix}pinterest Nakano dha`)
               data = await fetchJson(`https://api.lolhuman.xyz/api/pinterest?apikey=${setting.lolkey}&query=${q}`)
@@ -864,6 +979,7 @@ break
               dha.sendMessage(from, buffer, sticker, { quoted: mek })
               break
 case 'trigger':
+
 if (mek.message.extendedTextMessage != undefined || mek.message.extendedTextMessage != null) {
 ger = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
 reply(mess.wait)
@@ -1138,13 +1254,26 @@ break
               reply('Enable untuk mengaktifkan, disable untuk menonaktifkan')
 }
               break
-          case 'infoig':
-              teks = `Jangan Lupa Follow Ig Owner Ya : https://www.instagram.com/dha.chan26/`
-              dha.sendMessage(from, teks, text, { quoted : mek })
-              break
-          case 'sourcecode': case 'sc': case 'src':
-              textImg(`Bot ini menggunakan sc : https://github.com/dha-chan02/SelfBotz`)
-              break
+case 'antilink':
+              if (!isGroup) return reply(mess.only.group)
+              if (!isGroupAdmins) return reply(ind.admin())
+              if (!isBotGroupAdmins) return reply(`*_Bot Harus jadi Admin_*`)
+              if (!q) return reply(`Pilih enable atau disable`)
+              if (args[0].toLowerCase() === 'enable'){
+              if (isAntiLink) return reply(`Udah aktif`)
+              antilink.push(from)
+              fs.writeFileSync('./database/antilink.json', JSON.stringify(antilink))
+              reply('*「 ANTILINK DI AKTIFKAN 」*\n\nYang Ngirim Link Group Bakal Ke Kick!')
+              } else if (args[0].toLowerCase() === 'disable'){
+              let anu = antilink.indexOf(from)
+              antilink.splice(anu, 1)
+              fs.writeFileSync('./database/antilink.json', JSON.stringify(antilink))
+              reply('*「 ANTILINK DI NONAKTIFKAN 」*')
+              } else {
+              reply(`*_Pilih enable atau disable_*`)
+}
+              break                      
+     
           case 'q':
               if (!m.quoted) return reply( 'reply pesan!')
               let qu = dha.serializeM(await m.getQuotedObj())
@@ -1168,6 +1297,47 @@ break
               reply(txtx.slice(0, 65536) + '')
 }
               break
+     case 'credits':
+	        const daff = "6281905473135@s.whatsapp.net"
+			const ikyygan = "6285215319934@s.whatsapp.net"
+			const dhabot = "6282287486762@s.whatsapp.net"
+			const kyyset = "6285892935752@s.whatsapp.net"
+			const bar = "6285771126159@s.whatsapp.net"
+			const den = "6285727091924@s.whatsapp.net"
+			const sen = "62895349917040@s.whatsapp.net"
+			const kel = "6282248192917@s.whatsapp.net"
+			const vin = "6283177345510@s.whatsapp.net"
+			const kir = "6287705048235@s.whatsapp.net"
+			const uy = setting.ownerName
+			const cuy = setting.ownerNumber
+			
+menu = `*_Creator Dan Penyusun_*
+*•Yudha Perdana @${dhabot.split("@")[0]}*
+
+*_Record And Developer_*
+*•${uy} ${cuy.split("@")[0]}*
+
+*_Fitur Data Bot_*
+*•IkyAds @${ikyygan.split("@")[0]}*
+*•Yudha @${dhabot.split("@")[0]}*
+*•Rizky @${kyyset.split("@")[0]}*
+*•Akira @${kir.split("@")[0]}*
+*•Denis @${den.split("@")[0]}*
+*•Senku @${sen.split("@")[0]}*
+
+*_Patner Saya_*
+*•Daffa @${daff.split("@")[0]}*
+*•Akbar @${bar.split("@")[0]}*
+*•Kael @${kel.split("@")[0]}*
+*•Kevin @${vin.split("@")[0]}*
+
+*_Rest Apikey_*
+•LolHuman https://lolhuman.xyz`
+dha.sendMessage(from, { contentText: `${menu}`, 
+footerText: `NOTE: Silahkan Ketik .allmenu Jika Tombol Dibawah Tidak Muncul!`,
+buttons: [{ buttonId: `.simpelmenu`, buttonText: { displayText: 'LIST MENU' }, type: 1 }],
+headerType: 'LOCATION', locationMessage: { degreesLatitude: '', degreesLongitude: '', jpegThumbnail: awln, contextInfo: {mentionedJid: [daff, ikyygan, dhabot, kyyset, bar, kir, den, sen, kel, vin, cuy]}}}, 'buttonsMessage')
+ break               
 default:
 if (budy.startsWith('=>')){
 if (!isOwner) return
@@ -1197,6 +1367,10 @@ js = JSON.stringify(js, null, 2)
 js = '```' + js + '```'
 reply('_' + err + '_\n\n' + js)
 }
+}
+if (isCmd){
+teks = `Maaf @${senderr.split('@')[0]}, command ${prefix + command} tidak ada dalam menu 🙄`
+dha.sendMessage(from, {text:teks, jpegThumbnail:fs.readFileSync('./YUD2/logo.jpg')}, 'extendedTextMessage', {sendEphemeral:true, quoted:mek, contextInfo:{ forwardingScore:508, isForwarded:true, mentionedJid:[senderr]}})
 }
 if (isGroup && budy != undefined) {
 } else {
