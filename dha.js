@@ -804,7 +804,7 @@ headerType: 'LOCATION', locationMessage: { degreesLatitude: '', degreesLongitude
 			  
           case 'tod':
               result =`*Truth Or Dare*\nPemain diberi pilihan antara menjawab pertanyaan dengan jujur, atau melakukan tantangan yang diberikan`
-              buttons = [{buttonId: `${prefix}truth`,buttonText:{displayText: 'Truth'},type:1},{buttonId:`${prefix}dere`,buttonText:{displayText:'Dare'},type:1},{buttonId:`${prefix}tod`,buttonText:{displayText:'Tod'},type:1}]
+              buttons = [{buttonId: `${prefix}truth`,buttonText:{displayText: 'Truth'},type:1},{buttonId:`${prefix}dare`,buttonText:{displayText:'Dare'},type:1},{buttonId:`${prefix}tod`,buttonText:{displayText:'Tod'},type:1}]
               buttonsMessage = { contentText: `${result}`, footerText: 'Kebenaran atau tantangan?', buttons: buttons, headerType: 1 }
               prep = await dha.prepareMessageFromContent(from,{buttonsMessage},{})
               dha.relayWAMessage(prep)
