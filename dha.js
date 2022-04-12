@@ -709,15 +709,15 @@ headerType: 'LOCATION', locationMessage: { degreesLatitude: '', degreesLongitude
                dha.relayWAMessage(prep)
                break      
  case 'sc':
-              teks = ` Follow Gh Owner Untuk Sc tinggal Frok atau Download Di https://github.com/DhaBotz/`
+              teks = ` Follow Gh Owner Untuk Sc tinggal Frok atau Download Di https://github.com/kevinafsarmanik`
               dha.sendMessage(from, teks, text, { quoted : mek })
               break              
  case 'yt':
-              teks = `Jangan Lupa Subrek Yt Owner : https://youtu.be/vVHCBBs6lIs`
+              teks = `Jangan Lupa Subrek Yt Owner : Nanti di bikin`
               dha.sendMessage(from, teks, text, { quoted : mek })
               break                   
  case 'ig':
-              teks = `Jangan Lupa Follow Ig Owner https://instagram.com/yudha_perdana809/\nKalau Ada Keluhan Dm Aja`
+              teks = `Jangan Lupa Follow Ig Owner https://instagram.com/Kevinafsar_/\nKalau Ada Keluhan Dm Aja`
               dha.sendMessage(from, teks, text, { quoted : mek })
               break                  
 //   INI              
